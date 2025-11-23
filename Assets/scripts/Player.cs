@@ -1,0 +1,103 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class Player : MonoBehaviour
+{
+    private InputSystem_Actions controls;
+    private Vector2 moveInput;
+    private float climbInput;
+    public float moveSpeed = 5f;
+    //jump
+    public float jumpForce = 7f;
+    public float groundRadius = 0.2f;
+    private bool isGrounded;
+    public LayerMask groundLayer;
+    public Transform groundCheck;
+
+    //climb
+    public float climbSpeed = 4f;
+    private bool isClimbing;
+
+    private Rigidbody2D rb;
+    void Awake()
+    {
+        controls = new InputSystem_Actions();
+        rb = GetComponent<Rigidbody2D>();
+    }
+    void FixedUpdate()
+    {
+        
+
+        if (isClimbing)
+        {
+            // Disable gravity while climbing
+            rb.gravityScale = 0f;
+            rb.linearVelocity = new Vector2(moveInput.x * 2, climbInput * climbSpeed);
+        }
+        else
+        {
+            rb.gravityScale = 2.5f;
+            rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+        }
+
+            // Check if player is touching ground
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
+
+    }
+
+    void OnEnable()
+    {
+        controls.Player.Enable();
+        //moving player
+        controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        controls.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+        //jump assigned 
+        controls.Player.Jump.performed += OnJump;
+        //climb
+        controls.Player.Climb.performed += ctx => climbInput = ctx.ReadValue<float>();
+        controls.Player.Climb.canceled += ctx => climbInput = 0f;
+    }
+
+    void OnDisable()
+    {
+        controls.Player.Disable();
+    }
+
+    void Update()
+    {
+        transform.Translate(moveInput * Time.deltaTime * moveSpeed);
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed && isGrounded)
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+    }
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            // climb only when w or s pressed
+            if (climbInput != 0)   
+            {
+                isClimbing = true;
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isClimbing = false;
+        }
+    }
+
+}
