@@ -95,6 +95,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "GoDown",
+                    "type": "Button",
+                    "id": "9ca169ec-f787-4bec-b23e-ad9f99c75e9b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -451,18 +460,18 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "negative",
+                    "name": "Negative",
                     "id": "64b43e2d-dfad-4896-b643-c698fd6a2471",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Climb",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "positive",
+                    "name": "Positive",
                     "id": "c13a4c15-25b0-4541-8886-14928c9cd034",
                     "path": "<Keyboard>/w",
                     "interactions": "",
@@ -471,6 +480,17 @@
                     "action": "Climb",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "c29dad28-7234-4e1c-8434-bea6e771004d",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "GoDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
