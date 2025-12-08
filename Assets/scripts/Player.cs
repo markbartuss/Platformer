@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     private InputSystem_Actions controls;
+    Animator animator;
     private Vector2 moveInput;
     private float climbInput;
     public float moveSpeed = 5f;
@@ -18,11 +19,16 @@ public class Player : MonoBehaviour
     public float climbSpeed = 4f;
     private bool isClimbing;
 
+    //Collectable
+    public int fishes;
+
     private Rigidbody2D rb;
     void Awake()
     {
         controls = new InputSystem_Actions();
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+
     }
     void FixedUpdate()
     {
@@ -51,6 +57,9 @@ public class Player : MonoBehaviour
         //moving player
         controls.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         controls.Player.Move.canceled += ctx => moveInput = Vector2.zero;
+
+        //animator.Play("run"); // plays the Run animation clip
+     
         //jump assigned 
         controls.Player.Jump.performed += OnJump;
         //climb
@@ -66,11 +75,14 @@ public class Player : MonoBehaviour
     void Update()
     {
         transform.Translate(moveInput * Time.deltaTime * moveSpeed);
+
+
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+        
     }
 
     public void OnJump(InputAction.CallbackContext context)
