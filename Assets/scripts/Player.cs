@@ -1,3 +1,4 @@
+﻿using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,7 +21,18 @@ public class Player : MonoBehaviour
     private bool isClimbing;
 
     //Collectable
-    public int fishes;
+    public int fishes = 6;
+
+    //second level teleport
+    public Transform levelTeleport;
+    public Transform playerPos;
+
+    //oil
+    public float slipperyMultiplier = 15f;
+    public bool isSlippery = false;
+
+    bool isTp = false;
+    public bool door = false;
 
     private Rigidbody2D rb;
     void Awake()
@@ -28,6 +40,8 @@ public class Player : MonoBehaviour
         controls = new InputSystem_Actions();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        fishes = 6;
 
     }
     void FixedUpdate()
@@ -74,9 +88,25 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        transform.Translate(moveInput * Time.deltaTime * moveSpeed);
+        
+        
+        if (isSlippery)
+        {
+            // Add force instead of setting velocity → sliding effect
+            rb.AddForce(moveInput * moveSpeed * slipperyMultiplier);
+        }
+        else
+        {
+            transform.Translate(moveInput * Time.deltaTime * moveSpeed);
+        }
+        
+        if (fishes == 3 && isTp == false)
+        {
+            LevelUpdate();
+            isTp = true;
+        }
 
-
+        Finish();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -111,5 +141,17 @@ public class Player : MonoBehaviour
             isClimbing = false;
         }
     }
+    void LevelUpdate()
+    {
+            rb.position = levelTeleport.position;                
+    }
+    
+    //GAME FINISH 
+    void Finish()
+    {
+        if (door == true && fishes == 0)
+        {
 
+        }
+    }
 }
