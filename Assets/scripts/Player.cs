@@ -6,6 +6,10 @@ public class Player : MonoBehaviour
 {
     private InputSystem_Actions controls;
     Animator animator;
+
+    private AudioManager audioManager;
+    public AudioClip jump;
+
     private Vector2 moveInput;
     private float climbInput;
     public float moveSpeed = 5f;
@@ -31,6 +35,10 @@ public class Player : MonoBehaviour
     public float slipperyMultiplier = 15f;
     public bool isSlippery = false;
 
+    //menu
+    public GameObject menu;
+    public GameObject quest;
+
     bool isTp = false;
     public bool door = false;
 
@@ -41,8 +49,11 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
-        fishes = 6;
+        audioManager = GameObject.FindGameObjectWithTag("AM").GetComponent<AudioManager>();
+        jump = audioManager.jump;
 
+        fishes = 6;
+        slipperyMultiplier = 15f;
     }
     void FixedUpdate()
     {
@@ -120,6 +131,7 @@ public class Player : MonoBehaviour
         if (context.performed && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            audioManager.PlaySFX(jump);
         }
     }
     void OnTriggerStay2D(Collider2D other)
@@ -151,7 +163,9 @@ public class Player : MonoBehaviour
     {
         if (door == true && fishes == 0)
         {
-
+            menu.SetActive(true);
+            quest.SetActive(false);
+            Time.timeScale = 0f;
         }
     }
 }
