@@ -1,7 +1,7 @@
 ﻿using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using System.Collections;
 public class Player : MonoBehaviour
 {
     private InputSystem_Actions controls;
@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
 
     public bool isTp = false;
     public bool door = false;
+    public float delay = 0.3f;
 
     private Rigidbody2D rb;
     void Awake()
@@ -102,11 +103,12 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        
         if (moveInput.x > 0)
             fisherman.transform.rotation = Quaternion.Euler(0, 90, 0);
         else if (moveInput.x < 0)
             fisherman.transform.rotation = Quaternion.Euler(0, -90, 0);
-
+        
 
 
         if (isSlippery)
@@ -119,15 +121,21 @@ public class Player : MonoBehaviour
             transform.Translate(moveInput * Time.deltaTime * moveSpeed);
         }
         
-        if (fishes <= 3 && isTp == false)
+        if (fishes == 3 && isTp == false)
         {
-            LevelUpdate();
-            isTp = true;
+            rb.position = levelTeleport.position;
+            StartCoroutine(tp());
+            //LevelUpdate(); isTp = true;
+
         }
 
         Finish();
-
         
+    }
+    private IEnumerator tp()
+    {
+        yield return new WaitForSeconds(delay);
+        isTp = true;       
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -165,13 +173,14 @@ public class Player : MonoBehaviour
     }
     void LevelUpdate()
     {
-            rb.position = levelTeleport.position;                
+        rb.position = levelTeleport.position;
+        //isTp = true;
     }
     
     //GAME FINISH 
     void Finish()
     {
-        if (door == true && fishes <= 0)
+        if (door == true && fishes == 0)
         {
             menu.SetActive(true);
             quest.SetActive(false);
