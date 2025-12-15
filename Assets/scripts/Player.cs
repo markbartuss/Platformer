@@ -36,10 +36,11 @@ public class Player : MonoBehaviour
     public bool isSlippery = false;
 
     //menu
+    public GameObject fisherman;
     public GameObject menu;
     public GameObject quest;
 
-    bool isTp = false;
+    public bool isTp = false;
     public bool door = false;
 
     private Rigidbody2D rb;
@@ -54,6 +55,8 @@ public class Player : MonoBehaviour
 
         fishes = 6;
         slipperyMultiplier = 15f;
+
+        isTp = false;
     }
     void FixedUpdate()
     {
@@ -99,8 +102,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        
-        
+        if (moveInput.x > 0)
+            fisherman.transform.rotation = Quaternion.Euler(0, 90, 0);
+        else if (moveInput.x < 0)
+            fisherman.transform.rotation = Quaternion.Euler(0, -90, 0);
+
+
+
         if (isSlippery)
         {
             // Add force instead of setting velocity → sliding effect
@@ -111,13 +119,15 @@ public class Player : MonoBehaviour
             transform.Translate(moveInput * Time.deltaTime * moveSpeed);
         }
         
-        if (fishes == 3 && isTp == false)
+        if (fishes <= 3 && isTp == false)
         {
             LevelUpdate();
             isTp = true;
         }
 
         Finish();
+
+        
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -161,7 +171,7 @@ public class Player : MonoBehaviour
     //GAME FINISH 
     void Finish()
     {
-        if (door == true && fishes == 0)
+        if (door == true && fishes <= 0)
         {
             menu.SetActive(true);
             quest.SetActive(false);

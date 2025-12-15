@@ -21,6 +21,11 @@ public class MainMenu : MonoBehaviour
     {
         audioManager.PlaySFX(Button);
     }
+    public void restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1;
+    }
     public void Play()
     {
         //changes to the game scene when the method play gets called
